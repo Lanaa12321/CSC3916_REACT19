@@ -1,6 +1,6 @@
 import actionTypes from '../constants/actionTypes';
 
-const API_URL = process.env.REACT_APP_API_URL || "https://csci3916-hw3.onrender.com";
+const API_URL = process.env.REACT_APP_API_URL || "https://csci3916-hw4-gmx8.onrender.com";
 
 function userLoggedIn(username) {
     return {
@@ -9,7 +9,10 @@ function userLoggedIn(username) {
     };
 }
 
-function logout() {
+export function logoutUser() {
+    localStorage.removeItem('username');
+    localStorage.removeItem('token');
+
     return {
         type: actionTypes.USER_LOGOUT
     };
@@ -23,22 +26,27 @@ export function submitLogin(data) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data),
-            mode: 'cors'
+            body: JSON.stringify(data)
         })
-        .then((response) => {
+        .then(async (response) => {
+            const resData = await response.json();
+
             if (!response.ok) {
-                throw Error(response.statusText);
+                throw new Error(resData.msg || 'Login failed');
             }
-            return response.json();
+
+            return resData;
         })
         .then((res) => {
             localStorage.setItem('username', data.username);
             localStorage.setItem('token', res.token);
 
             dispatch(userLoggedIn(data.username));
+            alert('Login successful');
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+            alert(e.message || 'Login failed');
+        });
     };
 }
 
@@ -50,26 +58,22 @@ export function submitRegister(data) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data),
-            mode: 'cors'
+            body: JSON.stringify(data)
         })
-        .then((response) => {
-            if (!response.ok) {
-                throw Error(response.statusText);
-            }
-            return response.json();
-        })
-        .then(() => {
-            dispatch(submitLogin(data));
-        })
-        .catch((e) => console.log(e));
-    };
-}
+        .then(async (response) => {
+            const resData = await response.json();
 
-export function logoutUser() {
-    return dispatch => {
-        localStorage.removeItem('username');
-        localStorage.removeItem('token');
-        dispatch(logout());
+            if (!response.ok) {
+                throw new Error(resData.msg || 'Signup failed');
+            }
+
+            return resData;
+        })
+        .then((res) => {
+            alert(res.msg || 'Signup successful');
+        })
+        .catch((e) => {
+            alert(e.message || 'Signup failed');
+        });
     };
 }
