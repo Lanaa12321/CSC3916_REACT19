@@ -69,8 +69,9 @@ export function submitRegister(data) {
 
             return resData;
         })
-        .then((res) => {
-            alert(res.msg || 'Signup successful');
+        .then(() => {
+            alert('Signup successful. Logging you in now.');
+            dispatch(submitLogin(data));
         })
         .catch((e) => {
             alert(e.message || 'Signup failed');
