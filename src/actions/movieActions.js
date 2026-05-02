@@ -36,7 +36,7 @@ export function fetchMovie(movieId) {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': localStorage.getItem('token')
+                'Authorization': `JWT ${localStorage.getItem('token')}`
             },
             mode: 'cors'
         }).then((response) => {
@@ -45,7 +45,7 @@ export function fetchMovie(movieId) {
             }
             return response.json()
         }).then((res) => {
-            dispatch(movieFetched(res));
+            dispatch(movieFetched(res.movie));
         }).catch((e) => console.log(e));
     }
 }
@@ -57,7 +57,7 @@ export function fetchMovies() {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': localStorage.getItem('token')
+                'Authorization': `JWT ${localStorage.getItem('token')}`
             },
             mode: 'cors'
         }).then((response) => {
